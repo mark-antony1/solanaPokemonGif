@@ -18,11 +18,20 @@ pub mod myepicproject {
     let item_struct = ItemStruct {
       gif_link: gif_link.to_string(),
       user_address: *user.to_account_info().key,
+      upvotes: 0,
+      id: base_account.total_gifs.to_string(),
     };
 
 
     base_account.total_gifs += 1;
     base_account.gif_list.push(item_struct);
+    Ok(())
+  }
+
+  pub fn update_item(ctx: Context<UpdateItem>, id: String) -> ProgramResult {
+    let base_account = &mut ctx.accounts.base_account;
+    let index = id.parse::<i32>().unwrap();
+    base_account.gif_list[index as usize].upvotes += 1;
     Ok(())
   }
 }
@@ -44,10 +53,18 @@ pub struct AddGif<'info> {
   pub user: Signer<'info>,
 }
 
+#[derive(Accounts)]
+pub struct UpdateItem<'info> {
+  #[account(mut)]
+  pub base_account: Account<'info, BaseAccount>,
+}
+
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct ItemStruct {
   pub gif_link: String,
   pub user_address: Pubkey,
+  pub upvotes: u64,
+  pub id: String,
 }
 
 #[account]

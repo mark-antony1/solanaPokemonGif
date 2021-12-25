@@ -43,6 +43,15 @@ const main = async() => {
   console.log('👀 GIF Count', account.totalGifs.toString())
   console.log('👀 GIF Gif List', account.gifList)
 
+  await program.rpc.updateItem("0", {
+    accounts: {
+      baseAccount: baseAccount.publicKey
+    },
+  });
+
+  account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+
+  console.log('👀 GIF Gif List', account.gifList)
 }
 
 const runMain = async () => {
