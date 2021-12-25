@@ -34,6 +34,17 @@ pub mod myepicproject {
     base_account.gif_list[index as usize].upvotes += 1;
     Ok(())
   }
+
+  pub fn delete_gif(ctx: Context<DeleteGif>, id: String) -> ProgramResult {
+    let base_account = &mut ctx.accounts.base_account;
+    let index = id.parse::<i32>().unwrap();
+    let gif = &base_account.gif_list[index as usize];
+    if (*ctx.accounts.user.to_account_info().key != gif.user_address){
+      return Err(ProgramError::MissingRequiredSignature);
+    }
+    base_account.gif_list.remove(index as usize);
+    Ok(())
+  }
 }
 
 #[derive(Accounts)]
@@ -47,6 +58,14 @@ pub struct StartStuffOff<'info> {
 
 #[derive(Accounts)]
 pub struct AddGif<'info> {
+  #[account(mut)]
+  pub base_account: Account<'info, BaseAccount>,
+  #[account(mut)]
+  pub user: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct DeleteGif<'info> {
   #[account(mut)]
   pub base_account: Account<'info, BaseAccount>,
   #[account(mut)]

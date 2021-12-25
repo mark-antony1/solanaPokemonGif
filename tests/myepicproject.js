@@ -52,6 +52,17 @@ const main = async() => {
   account = await program.account.baseAccount.fetch(baseAccount.publicKey);
 
   console.log('👀 GIF Gif List', account.gifList)
+
+  await program.rpc.deleteGif("0", {
+    accounts: {
+      baseAccount: baseAccount.publicKey,
+      user: provider.wallet.publicKey,
+    },
+  });
+
+  account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+
+  console.log('👀 GIF Gif List', account.gifList)
 }
 
 const runMain = async () => {
